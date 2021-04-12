@@ -1,0 +1,24 @@
+function [win]=windowdetection(data1, fs,number,data2)
+gr=0;
+tm=fs;
+data1=data1(1:1:number*tm);
+[Ramp,R,delay]=pan_tompkin(data1,fs,gr);
+%% RR interval 
+q=1;
+RR=zeros(1,length(R));
+    for i =1:1:(length(R)-1)
+        RR(q)=R(i+1)-R(i);
+        q=q+1;
+    end 
+maxRR=tm-1;%max(RR)%-200; %255
+%% heart beat QRS waveform and QRS template originals
+% orgQRS1=data(R(1)-maxRR/3:R(1)+maxRR*2/3);
+q=1;
+win=zeros(maxRR+1,(length(R)-1))';
+    for i=2:1:length(R)-1
+         win(q,:)=data2(R(i)-maxRR/3:R(i)+maxRR*2/3);
+         q=q+1;
+    end
+
+end
+
