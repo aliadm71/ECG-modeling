@@ -1,0 +1,9 @@
+function [XD]=Wavelet(X)
+
+dec = mdwtdec('r',X,8,'sym4');
+[XD,decDEN,THRESH] = mswden('den',dec,'minimaxi','mln','s',false);
+
+end
+
+%input signal = X;
+%denoised signal = XD;
