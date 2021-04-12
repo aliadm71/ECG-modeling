@@ -1,0 +1,33 @@
+function [S] = ECGproducer(N, fs, f, alphai, bi, tetai, teta0,Z0);
+
+w = 2*pi*f;
+dt = 1/fs;
+ro=zeros(1,N);
+teta = zeros(1,N);
+X = zeros(1,N);
+Y = zeros(1,N);
+Z = zeros(1,N);
+
+teta(1) = teta0;
+for i = 1:N-1;
+    teta(i+1) = mod(teta(i) + w*dt + pi ,  2*pi) - pi;
+    ro(i)=1-sqrt(X(i).^2+Y(i).^2);
+    dtetaiz = mod(teta(i) - tetai.z + pi , 2*pi) - pi;
+    
+    if (i==1)
+        X(i)=-1;
+        Y(i)=1;
+        Z(i) = sum(alphai.z .* exp(-dtetaiz .^2 ./ (2*bi.z .^ 2)));
+    end
+    X(i+1) = X(i).*(ro(i)*dt+1)-Y(i).*w*dt;
+    Y(i+1) = Y(i).*(ro(i)*dt+1)+X(i).*w*dt;
+    Z(i+1) = Z(i) - dt*sum(w*alphai.z ./ (bi.z .^ 2) .* dtetaiz .* exp(-dtetaiz .^2 ./ (2* bi.z .^ 2)));
+end 
+
+S.x = X;
+S.y = Y;
+S.z = Z+Z0;
+
+
+    
+     
