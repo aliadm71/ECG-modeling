@@ -1,0 +1,60 @@
+clear all 
+close all
+clc
+%%
+fileID=fopen('s8_walk.atr');
+[S1,tm]=rdsamp('s8_walk');
+m=tm*60;
+ecg=S1(1:m,1);
+% ecg=(ecg-min(ecg))/(max(ecg)-min(ecg));
+fs=tm;
+t=0:1/fs:(length(ecg)-1)/fs;
+%%
+data=ecg';
+gr=0;
+[Ramp,R,delay]=pan_tompkin(data,fs,gr);
+%%
+number=50;
+avg=averagewindows(data, fs,number);
+% plot(avg)
+
+%% filter  -- Denoised signal
+X=avg;
+Denoised_X=Wavelet(X);
+
+%%
+T1=40;
+T2=50;
+[loc_peak, wid_peak]=PQRST(X,T1,T2)
+
+%% Results - figures
+
+figure
+plot(avg)
+hold on
+plot(loc_peak,avg(loc_peak),'r*')
+figure
+plot(Denoised_X)
+hold on 
+plot(avg)
+
+%%
+teta0 = -pi;  
+
+tetaiecg.z=(loc_peak.*2*pi)./fs-pi;
+biecg.z=(wid_peak)./fs;
+alphaiecg.z=avg(loc_peak);
+Z0=50*sin((1:1:length(avg))/400);
+
+Secg= ECGproducer(fs,fs,1,alphaiecg,biecg,tetaiecg,teta0,Z0);
+
+    Xecg=Secg.x;
+    Yecg=Secg.y;
+    Zecg=Secg.z;
+hold on
+plot(Zecg,'black')
+
+figure
+plot3(Yecg,Xecg,Zecg)
+hold on 
+plot(Yecg, Xecg)
