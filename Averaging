@@ -1,0 +1,8 @@
+function [avg]=averagewindows(data, fs,number)
+
+win=windowdetection(data, fs,number,data);
+
+    for j=1:1:length(win(1,:))
+        avg(1,j)=mean(win(1:20,j));
+    end
+end
