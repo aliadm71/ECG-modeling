@@ -1,0 +1,19 @@
+function [loc_peak, wid_peak]=PQRST(X,T1,T2)
+
+[pks1,locs1,widths1,proms1]=findpeaks(X,'MinPeakProminence',T1,'Annotate','extents');
+[pks2,locs2,widths2,proms2]=findpeaks(-X,'MinPeakProminence',T2,'Annotate','extents');
+
+
+A1=[locs1, locs2];
+B1=[widths1, widths2];
+B1=B1+1.1*B1;
+loc_peak=sort(A1);
+    for i=1:length(locs1)+length(locs2)
+        wid_peak(i)=B1(find(A1==loc_peak(i)));
+    end
+end
+
+% plot(loc_peak,XD(loc_peak),'r*')
+
+%T1= first threshold;
+%T2= second threshold;
